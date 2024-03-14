@@ -26,6 +26,11 @@ final class Tile {
     this.score = score;
   }
 
+  public Tile(Tile other) {
+    this.letter = other.letter;
+    this.score = other.score;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

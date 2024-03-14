@@ -64,4 +64,8 @@ public class Word {
   public boolean isVertical() {
     return vertical;
   }
+
+  public Tile[] getTiles() {
+    return tiles.clone();
+  }
 }
