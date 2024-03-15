@@ -6,6 +6,8 @@
 
 package test;
 
+import test.Tile.Bag;
+
 public class MainTrain {
   public static void testBag() {
     Bag b = Tile.Bag.getBag();

@@ -34,7 +34,9 @@ public class Word {
     if (o == null || getClass() != o.getClass()) return false;
     Word word = (Word) o;
     if (row != word.row || col != word.col || vertical != word.vertical) return false;
-    for (int i = 0; i < tiles.length; i++) if (!tiles[i].equals(word.tiles[i])) return false;
+    for (int i = 0; i < tiles.length; i++) {
+      if (this.tiles[i] != word.tiles[i]) return false;
+    }
     return true;
   }
 
@@ -67,5 +69,16 @@ public class Word {
 
   public Tile[] getTiles() {
     return tiles.clone();
+  }
+
+  public void printWord() {
+    for (Tile t : tiles) {
+      if (t != null) {
+        System.out.print(t.getLetter());
+      } else {
+        System.out.print("_"); // print a default value for null tiles
+      }
+    }
+    System.out.println();
   }
 }
