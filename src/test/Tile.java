@@ -26,9 +26,10 @@ public class Tile {
     this.score = score;
   }
 
-  public Tile(Tile other) {
-    this.letter = other.letter;
-    this.score = other.score;
+  public Tile(Tile t) {
+    if (t == null) throw new IllegalArgumentException("Tile cannot be null");
+    this.letter = t.letter;
+    this.score = t.score;
   }
 
   @Override
@@ -44,17 +45,16 @@ public class Tile {
     return Objects.hash(letter, score);
   }
 
-  //  public char getLetter() {
-  //    return letter;
-  //  }
-
   public int getScore() {
     return score;
   }
 
   public char getLetter() {
-    if (letter < 'A' || letter > 'Z') return 0;
     return letter;
+  }
+
+  public Tile copy() {
+    return new Tile(this.letter, this.score);
   }
 
   /** Represents a Bag of Tiles. The Bag contains a specific quantity of each Tile. */

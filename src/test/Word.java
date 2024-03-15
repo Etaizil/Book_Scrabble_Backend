@@ -68,7 +68,11 @@ public class Word {
   }
 
   public Tile[] getTiles() {
-    return tiles.clone();
+    Tile[] copy = new Tile[tiles.length];
+    for (int i = 0; i < tiles.length; i++) {
+      copy[i] = new Tile(tiles[i]);
+    }
+    return copy;
   }
 
   public void printWord() {
