@@ -22,6 +22,9 @@ public class Word {
    */
   public Word(Tile[] tiles, int row, int col, boolean vertical) {
     if (tiles == null) throw new IllegalArgumentException("tiles cannot be null");
+    for (Tile tile : tiles) {
+      if (tile == null) throw new IllegalArgumentException("tiles cannot contain null values");
+    }
     this.tiles = tiles;
     this.row = row;
     this.col = col;
@@ -38,6 +41,32 @@ public class Word {
       if (this.tiles[i] != word.tiles[i]) return false;
     }
     return true;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder word = new StringBuilder();
+    for (Tile tile : this.getTiles()) {
+      word.append(tile.getLetter());
+    }
+    return word.toString();
+  }
+
+  public Word(Word original) {
+    this.row = original.row;
+    this.col = original.col;
+    this.vertical = original.vertical;
+    this.tiles = new Tile[original.tiles.length];
+    for (int i = 0; i < original.tiles.length; i++) {
+      this.tiles[i] = original.tiles[i].copy(); // assuming Tile class has a copy method
+    }
+  }
+
+  public void setBlankValue(int index, char value) {
+    if (index < 0 || index >= tiles.length)
+      throw new IllegalArgumentException("index out of bounds");
+    Tile tile = tiles[index];
+    tile.blankValue = value;
   }
 
   /**
@@ -70,19 +99,19 @@ public class Word {
   public Tile[] getTiles() {
     Tile[] copy = new Tile[tiles.length];
     for (int i = 0; i < tiles.length; i++) {
-      copy[i] = new Tile(tiles[i]);
+      copy[i] = tiles[i].copy();
     }
     return copy;
   }
 
-  public void printWord() {
-    for (Tile t : tiles) {
-      if (t != null) {
-        System.out.print(t.getLetter());
-      } else {
-        System.out.print("_"); // print a default value for null tiles
-      }
-    }
-    System.out.println();
-  }
+  //  public void printWord() {
+  //    for (Tile t : tiles) {
+  //      if (t != null) {
+  //        System.out.print(t.getLetter());
+  //      } else {
+  //        System.out.print("_"); // print a default value for null tiles
+  //      }
+  //    }
+  //    System.out.println();
+  //  }
 }

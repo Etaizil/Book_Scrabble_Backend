@@ -77,7 +77,10 @@ public class MainTrain {
     if (b.tryPlaceWord(horn) != 14) System.out.println("problem in placeWord for 1st word (-10)");
 
     Word farm = new Word(get("FA_M"), 5, 7, true);
-    if (b.tryPlaceWord(farm) != 9) System.out.println("problem in placeWord for 2ed word (-10)");
+    int retscore = b.tryPlaceWord(farm);
+    if (retscore != 9)
+      System.out.println(
+          "problem in placeWord for 2ed word (-10), returned " + retscore + " instead of 9");
 
     Word paste = new Word(get("PASTE"), 9, 5, false);
     if (b.tryPlaceWord(paste) != 25) System.out.println("problem in placeWord for 3ed word (-10)");

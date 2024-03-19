@@ -5,13 +5,16 @@
 */
 package test;
 
+import java.security.SecureRandom;
 import java.util.Objects;
-import java.util.Random;
 
 /** Represents a Tile. Each Tile has a letter and a score associated with it. */
 public class Tile {
   public final char letter;
   public final int score;
+  public char blankValue;
+
+  public boolean originallyBlank = false;
 
   /**
    * Constructs a new Tile with the specified letter and score.
@@ -19,17 +22,18 @@ public class Tile {
    * @param letter The letter for this Tile.
    * @param score The score for this Tile.
    */
-  private Tile(char letter, int score) {
+  private Tile(char letter, int score) { // MUST BE PRIVATE
+    if (letter == '_') {
+      this.originallyBlank = true;
+      this.blankValue = '_';
+      this.letter = '_';
+      this.score = 0;
+      return;
+    }
     if (letter < 'A' || letter > 'Z')
       throw new IllegalArgumentException("letter must be a capital letter");
     this.letter = letter;
     this.score = score;
-  }
-
-  public Tile(Tile t) {
-    if (t == null) throw new IllegalArgumentException("Tile cannot be null");
-    this.letter = t.letter;
-    this.score = t.score;
   }
 
   @Override
@@ -45,6 +49,12 @@ public class Tile {
     return Objects.hash(letter, score);
   }
 
+  @Override
+  public String toString() {
+    // Assuming the Tile class has a field named 'letter' of type char
+    return String.valueOf(this.letter);
+  }
+
   public int getScore() {
     return score;
   }
@@ -54,7 +64,10 @@ public class Tile {
   }
 
   public Tile copy() {
-    return new Tile(this.letter, this.score);
+    Tile copy = new Tile(this.letter, this.score);
+    copy.originallyBlank = this.originallyBlank;
+    copy.blankValue = this.blankValue;
+    return copy;
   }
 
   /** Represents a Bag of Tiles. The Bag contains a specific quantity of each Tile. */
@@ -68,7 +81,7 @@ public class Tile {
     }; // Scores of each letter
     private int[] quantities = MAX_QUANTITIES.clone(); // Current quantities of each letter
     private final Tile[] tiles;
-    private static Random random = new Random();
+    private static SecureRandom random = new SecureRandom();
 
     /** Constructs a new Bag. The Bag contains a specific quantity of each Tile. */
     public Bag() {
@@ -108,7 +121,7 @@ public class Tile {
      * @return a random tile from the bag or null if the bag is empty.
      */
     public Tile getRand() {
-      if (tiles.length == 0) return null;
+      if (size() == 0) return null;
       int index = getRandomInt();
       if (quantities[index] == 0) return null;
       quantities[index]--;
@@ -122,6 +135,10 @@ public class Tile {
      * @return a specific tile from the bag or null if the index is empty.
      */
     public Tile getTile(char c) {
+      if (c == '_') {
+        // Special case for blank tiles
+        return new Tile('_', 0);
+      }
       if (c < 'A' || c > 'Z') return null;
       int index = c - 'A';
       if (quantities[index] == 0) return null;
