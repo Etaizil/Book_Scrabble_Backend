@@ -10,12 +10,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
+/**
+ * Represents a Board. A Board is a matrix of Tiles, and may contain a bonus for a tile. The Board
+ * is where the game is played. It is a singleton, and created by the first player to play
+ */
 public class Board {
+  /** The singleton instance of the board. */
   private static Board CreatedBoard = null;
+
+  /** The tiles on the board. */
   private Tile[][] board;
+
+  /** The number of rows of the board. */
   private final int boardRows = 15;
+
+  /** The number of columns of the board. */
   private final int boardCols = 15;
 
+  /**
+   * A flag to indicate if the first turn was played, currently used for the star bonus in getScore.
+   */
   private boolean isFirstTurn = true;
 
   /**
@@ -42,6 +56,7 @@ public class Board {
     {5, 1, 1, 2, 1, 1, 1, 5, 1, 1, 1, 2, 1, 1, 5}
   };
 
+  /** Constructs a new Board. */
   private Board() {
     board = new Tile[15][15];
   }
@@ -59,13 +74,13 @@ public class Board {
   }
 
   /**
-   * returns the tiles of the board.
+   * returns the tiles on the board. CURRENTLY UNUSED
    *
    * @return 2D array of the tiles on the board.
    */
   public Tile[][] getTiles() {
     if (board == null) {
-      return null; // Return null if there are no tiles on the board
+      return null;
     }
     Tile[][] copy = new Tile[board.length][]; // Create a new array for copying
     for (int i = 0; i < board.length; i++) {
@@ -87,19 +102,18 @@ public class Board {
     int row = word.getRow();
     int col = word.getCol();
     int length = word.getTiles().length;
-    for (int i = 0; i < word.getTiles().length; i++) {
+    for (int i = 0; i < length; i++) {
       if (bonusBoard[row][col] == 0) {
-        // System.out.println("Word is on star");
         return true;
       }
       if (word.isVertical()) {
-        if (row < boardRows) { // In the limits
+        if (row < boardRows) {
           row++;
         } else {
           break;
         }
       } else { // Horizontal
-        if (col < boardCols) { // In the limits
+        if (col < boardCols) {
           col++;
         } else {
           break;
@@ -109,17 +123,21 @@ public class Board {
     return false;
   }
 
-  // One of the tiles must touch a letter on the board.
-  // If the letter is on another existing letter, the letters must be the same.
-  boolean isTouchingAnotherWordLegally(Word word) {
-    if (isBoardEmpty() && !isOutOfBounds(word)) return true;
+  /**
+   * Check if the word is touching another word legally. A word is touching another word legally if
+   * it is on the board limits, and if it is crossing or touching another word.
+   *
+   * @param word The word to place on the board.
+   * @return true if the word is touching another word legally, false otherwise.
+   */
+  private boolean isTouchingAnotherWordLegally(Word word) {
+    if (isBoardEmpty() && !isOutOfBounds(word)) return true; // Vacuous truth
     int row = word.getRow();
     int col = word.getCol();
     for (Tile tile : word.getTiles()) { // Check if the letter is on another letter.
       if (board[row][col] != null) {
         if (tile.getLetter() != '_') {
           if (board[row][col].getLetter() != tile.getLetter()) {
-            // System.out.println("Word is not touching another word legally");
             return false;
           }
         }
@@ -143,6 +161,12 @@ public class Board {
     return true;
   }
 
+  /**
+   * Check if the word is out of bounds of the board.
+   *
+   * @param word The word to place on the board.
+   * @return true if the word is out of bounds, false otherwise.
+   */
   private boolean isOutOfBounds(Word word) {
     if (word == null) return false;
     int row = word.getRow();
@@ -160,7 +184,7 @@ public class Board {
    *
    * @return true if the board is empty, false otherwise.
    */
-  boolean isBoardEmpty() {
+  private boolean isBoardEmpty() {
     for (int i = 0; i < boardRows; i++) {
       for (int j = 0; j < boardCols; j++) {
         if (board[i][j] != null) return false;
@@ -170,8 +194,7 @@ public class Board {
   }
 
   /**
-   * Check if not the word is on the board limits. Check if the word is crossing or touching another
-   * word.
+   * Check if the word is in the board limits, and if it is crossing, touching another word legally.
    *
    * @param word The word to place on the board.
    * @return true if the word was placed on the board, false otherwise.
@@ -184,7 +207,7 @@ public class Board {
   }
 
   /**
-   * Checks if the specified word is legal according to the dictionary. For now, return true.
+   * Checks if the specified word is legal according to the dictionary. FOR NOW, RETURNS TRUE.
    *
    * @param word The word to check.
    * @return true if the word is legal according to the dictionary, false otherwise.
@@ -195,12 +218,16 @@ public class Board {
 
   /** Checks is the word is legal by checking board and dictionary legality. * */
   private boolean isWordLegal(Word word) {
-    // System.out.println("Checking legality of word: " + word);
     boolean legal = boardLegal(word) && dictionaryLegal(word);
-    // System.out.println("Word is " + (legal ? "legal" : "illegal"));
     return legal;
   }
 
+  /**
+   * Concatenates the vertical word with the tiles above and below it, and returns the new word.
+   *
+   * @param word The word to check.
+   * @return the concatenated word.
+   */
   private Tile[] getWordAboveAndBelowVerticalWord(Word word) {
     ArrayList<Tile> tiles = new ArrayList<>();
     int row = word.getRow();
@@ -233,12 +260,18 @@ public class Board {
     return tilesArray;
   }
 
+  /**
+   * For each tile in the word, checks if there are any words to the left and right of the tile. If
+   * so, concatenates the tiles and returns the new word.
+   *
+   * @param word The word to check.
+   * @return An ArrayList of the words.
+   */
   private ArrayList<Word> getWordsLeftAndRightToVerticalWord(Word word) {
     ArrayList<Word> words = new ArrayList<>();
     int row = word.getRow();
     for (Tile t : word.getTiles()) {
-      Tile[] tempTile =
-          new Tile[] {t}; // Creating a word from a single tile to check left and right
+      Tile[] tempTile = new Tile[] {t};
       // now it's the same as check left and right for horizontal word, so I can call
       // getWordLeftAndRightHorizontalWord
       Word temp = new Word(tempTile, row, word.getCol(), false);
@@ -248,18 +281,19 @@ public class Board {
         while (startCol > 0 && board[row][startCol - 1] != null) {
           startCol--;
         }
-        words.add(
-            new Word(
-                leftAndRightWord,
-                row,
-                startCol,
-                false)); // check that the words contains an ArrayList of words
+        words.add(new Word(leftAndRightWord, row, startCol, false));
       }
       row++;
     }
     return words;
   }
 
+  /**
+   * Given a vertical word, gets the new words created, in all directions.
+   *
+   * @param word The word to check.
+   * @return An ArrayList of the new words created.
+   */
   private ArrayList<Word> getWordsForVerticalWord(Word word) {
     ArrayList<Word> words = new ArrayList<>();
     Tile[] aboveAndBelowWord = getWordAboveAndBelowVerticalWord(word); // above+word+below
@@ -272,10 +306,16 @@ public class Board {
               true));
     }
     words.addAll(getWordsLeftAndRightToVerticalWord(word));
-    // check that the words contains an ArrayList of words
     return words;
   }
 
+  /**
+   * Concatenates the horizontal word with the tiles to the left and right of it, and returns the
+   * new word.
+   *
+   * @param word The word to check.
+   * @return the concatenated word.
+   */
   private Tile[] getWordLeftAndRightHorizontalWord(Word word) {
     ArrayList<Tile> tiles = new ArrayList<>();
     int row = word.getRow();
@@ -308,14 +348,18 @@ public class Board {
     return tilesArray;
   }
 
+  /**
+   * For each tile in the word, checks if there are any words above and below the tile. If so,
+   * concatenates the tiles and returns the new word.
+   *
+   * @param word The word to check.
+   * @return An ArrayList of the words.
+   */
   private ArrayList<Word> getWordsAboveAndBelowHorizontalWord(Word word) {
     ArrayList<Word> words = new ArrayList<>();
     int col = word.getCol();
     for (Tile t : word.getTiles()) {
-      Tile[] tempTile =
-          new Tile[] {t}; // Creating a word from a single tile to check above and below
-      // now it's the same as check above and below for vertical word, so I can call
-      // getWordAboveAndBelowVerticalWord
+      Tile[] tempTile = new Tile[] {t};
       Word temp = new Word(tempTile, word.getRow(), col, true);
       Tile[] aboveAndBelowWord = getWordAboveAndBelowVerticalWord(temp);
       if (aboveAndBelowWord != null) {
@@ -330,6 +374,12 @@ public class Board {
     return words;
   }
 
+  /**
+   * Given a horizontal word, gets the new words created, in all directions.
+   *
+   * @param word The word to check.
+   * @return An ArrayList of the new words created.
+   */
   private ArrayList<Word> getWordsForHorizontalWord(Word word) {
     ArrayList<Word> words = new ArrayList<>();
     Tile[] leftAndRightWord = getWordLeftAndRightHorizontalWord(word); // left+word+right
@@ -339,20 +389,20 @@ public class Board {
       while (startCol > 0 && board[row][startCol - 1] != null) {
         startCol--;
       }
-      words.add(
-          new Word(
-              leftAndRightWord,
-              word.getRow(),
-              startCol,
-              false)); // check that the words contains an ArrayList of words
+      words.add(new Word(leftAndRightWord, word.getRow(), startCol, false));
     }
-    words.addAll(getWordsAboveAndBelowHorizontalWord(word)); // for each tile check above and below
+    words.addAll(getWordsAboveAndBelowHorizontalWord(word));
     return words;
   }
 
-  public ArrayList<Word> getWords(Word word) {
+  /**
+   * Given a word, gets all the words created, if the word would be placed on the board.
+   *
+   * @param word The word intended to be placed on the board.
+   * @return An ArrayList of the new words created.
+   */
+  private ArrayList<Word> getWords(Word word) {
     ArrayList<Word> words = new ArrayList<>();
-    Tile[] wordTiles = word.getTiles();
     words.add(word);
     if (word.isVertical()) {
       ArrayList<Word> verticalWords = getWordsForVerticalWord(word);
@@ -361,12 +411,17 @@ public class Board {
       ArrayList<Word> horizontalWords = getWordsForHorizontalWord(word);
       words.addAll(horizontalWords);
     }
-    // remove words that already exist in the board
     words.removeIf(this::isWordOnBoard);
     return words;
   }
 
-  public boolean isWordOnBoard(Word word) {
+  /**
+   * Checks if a given word is on the board.
+   *
+   * @param word The word to check.
+   * @return true if the word is on the board, false otherwise.
+   */
+  private boolean isWordOnBoard(Word word) {
     int row = word.getRow();
     int col = word.getCol();
     for (Tile tile : word.getTiles()) {
@@ -379,10 +434,12 @@ public class Board {
         col++;
       }
     }
-    // If we've gone through all the tiles, and they all match, then the word is on the board
     return true;
   }
 
+  /**
+   * @return a DEEP copy of the board.
+   */
   private Tile[][] copyBoard() {
     Tile[][] copiedBoard = new Tile[boardRows][boardCols];
     for (int i = 0; i < boardRows; i++) {
@@ -396,11 +453,10 @@ public class Board {
   }
 
   /**
-   * Places the specified word on the board. If the word is legal, return the score of the word. If
-   * the word is not legal, return 0.
+   * Given a word, it calculates the score. If the word is null, return 0.
    *
    * @param word The word to place on the board.
-   * @return the score of the word if the word is legal, 0 otherwise.
+   * @return the score of the word, 0 if null
    */
   private int getScore(Word word) {
     if (word == null) return 0;
@@ -437,6 +493,7 @@ public class Board {
     return totalScore;
   }
 
+  /* After all checks, places the word on the board. */
   private void placeWord(Word word) {
     int row = word.getRow();
     int col = word.getCol();
@@ -451,7 +508,12 @@ public class Board {
     }
   }
 
-  /** Changes the underscore tiles in the word to the corresponding tiles on the board. */
+  /**
+   * Changes the underscore tiles in the word to the corresponding tiles on the board.
+   *
+   * @param word The word to change the underscore tiles.
+   * @return the word with the underscore tiles changed to letters.
+   */
   private Word changeUnderScoreTiles(Word word) {
     Tile[] tiles = word.getTiles();
     int row = word.getRow();
@@ -468,7 +530,7 @@ public class Board {
   }
 
   /**
-   * Checks if the word contains an underscore.
+   * Checks if a given word contains an underscore.
    *
    * @param word The word to check.
    * @return true if the word contains an underscore, false otherwise.
@@ -485,10 +547,10 @@ public class Board {
 
   /**
    * Tries to place the specified word on the board. If the word is legal, place it and return the
-   * score of the word. 0 otherwise.
+   * score of the all the words created by the placed word. If any word is not legal, return 0.
    *
    * @param word The word to place on the board.
-   * @return the score of the word if it was placed on the board, 0 otherwise.
+   * @return the score of the created words if the word was placed on the board, 0 otherwise.
    */
   public int tryPlaceWord(Word word) {
     if (word == null) return 0;
@@ -500,29 +562,27 @@ public class Board {
     for (Word w : words) {
       if (!isWordLegal(w)) return 0;
     }
-    placeWord(word); // Place the word on the board, other words will obviously be created.
-    // printBoard();
+    placeWord(word);
     int score = 0;
-    for (Word w : words) { // Sum the score from all the words created by the placed word.
+    for (Word w : words) { // Sum the scores from all the words created by the placed word.
       int wordScore = getScore(w);
-      // System.out.println("Score for word " + w + ": " + wordScore);
       score += wordScore;
     }
-    // System.out.println("Total score: " + score);
 
     return score;
   }
 
-  //  public void printBoard() {
-  //    for (int i = 0; i < boardRows; i++) {
-  //      for (int j = 0; j < boardCols; j++) {
-  //        if (board[i][j] != null) {
-  //          System.out.print(board[i][j].getLetter() + " ");
-  //        } else {
-  //          System.out.print("  ");
-  //        }
-  //      }
-  //      System.out.println();
-  //    }
-  //  }
+  /** NOT USED IN THE GAME, FOR TESTING PURPOSES ONLY */
+  public void printBoard() {
+    for (int i = 0; i < boardRows; i++) {
+      for (int j = 0; j < boardCols; j++) {
+        if (board[i][j] != null) {
+          System.out.print(board[i][j].getLetter() + " ");
+        } else {
+          System.out.print("  ");
+        }
+      }
+      System.out.println();
+    }
+  }
 }

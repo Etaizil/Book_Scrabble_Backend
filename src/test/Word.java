@@ -8,8 +8,14 @@ package test;
 
 /** Represents a Word. A Word is a sequence of Tiles. */
 public class Word {
+
+  /** The tiles of the word. */
   private final Tile[] tiles;
+
+  /** The row and column of the first letter of the word. */
   private final int row, col;
+
+  /** true if the word is vertical, false otherwise. */
   private final boolean vertical;
 
   /**
@@ -52,6 +58,11 @@ public class Word {
     return word.toString();
   }
 
+  /**
+   * A copy constructor for Word
+   *
+   * @param original The Word to copy.
+   */
   public Word(Word original) {
     this.row = original.row;
     this.col = original.col;
@@ -62,15 +73,8 @@ public class Word {
     }
   }
 
-  public void setBlankValue(int index, char value) {
-    if (index < 0 || index >= tiles.length)
-      throw new IllegalArgumentException("index out of bounds");
-    Tile tile = tiles[index];
-    tile.blankValue = value;
-  }
-
   /**
-   * getter for row
+   * Getter for row
    *
    * @return the row of the first letter of the word.
    */
@@ -79,7 +83,7 @@ public class Word {
   }
 
   /**
-   * getter for col
+   * Getter for col
    *
    * @return the column of the first letter of the word.
    */
@@ -88,7 +92,7 @@ public class Word {
   }
 
   /**
-   * getter for vertical
+   * Getter for vertical
    *
    * @return true if the word is vertical, false otherwise.
    */
@@ -96,6 +100,11 @@ public class Word {
     return vertical;
   }
 
+  /**
+   * This method returns a DEEP copy of the tiles of the word.
+   *
+   * @return a DEEP copy of the tiles of the word.
+   */
   public Tile[] getTiles() {
     Tile[] copy = new Tile[tiles.length];
     for (int i = 0; i < tiles.length; i++) {
@@ -104,14 +113,15 @@ public class Word {
     return copy;
   }
 
-  //  public void printWord() {
-  //    for (Tile t : tiles) {
-  //      if (t != null) {
-  //        System.out.print(t.getLetter());
-  //      } else {
-  //        System.out.print("_"); // print a default value for null tiles
-  //      }
-  //    }
-  //    System.out.println();
-  //  }
+  /** This method prints the word to the console. CURRENTLY UNUSED */
+  public void printWord() {
+    for (Tile t : tiles) {
+      if (t != null) {
+        System.out.print(t.getLetter());
+      } else {
+        System.out.print("%"); // print a default value for null tiles
+      }
+    }
+    System.out.println();
+  }
 }
