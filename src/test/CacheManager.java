@@ -1,4 +1,4 @@
-package test2;
+package test;
 
 import java.util.HashSet;
 
@@ -7,6 +7,7 @@ import java.util.HashSet;
 @project PTM1 Project
 @author  Zilberman Etai
 */
+
 public class CacheManager {
   public final int size;
   CacheReplacementPolicy crp;
@@ -15,6 +16,7 @@ public class CacheManager {
   public CacheManager(int size, CacheReplacementPolicy crp) {
     this.size = size;
     this.crp = crp;
+    this.cache = new HashSet<>();
   }
 
   public boolean query(String word) { // is the word in the cache

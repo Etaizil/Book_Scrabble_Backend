@@ -1,6 +1,5 @@
-package test2;
+package test;
 
-import java.util.Arrays;
 import java.util.BitSet;
 import java.security.MessageDigest;
 import java.math.BigInteger;
@@ -54,6 +53,10 @@ public class BloomFilter {
 
   @Override
   public String toString() {
-    return bitSet.toString().replace(" ", "");
+    StringBuilder str = new StringBuilder();
+    for (int i = 0; i < arrSize; i++) {
+      str.append(bitSet.get(i) ? "1" : "0");
+    }
+    return str.toString().replaceFirst("0+$", "");
   }
 }

@@ -1,9 +1,6 @@
-package test2;
+package test;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import org.jetbrains.annotations.Nullable;
-import org.w3c.dom.Node;
 
 /*
 @created 19/03/2024 - 17:11
@@ -29,10 +26,10 @@ public class LRU implements CacheReplacementPolicy { // Oldest element searched 
     } else {
       if (cache.size() == maxSize) {
         remove();
-        Node newNode = new Node(word);
-        lruList.addToHead(newNode); // ok because we check if the cache is full
-        cache.put(word, newNode);
       }
+      Node newNode = new Node(word);
+      lruList.addToHead(newNode); // ok because we check if the cache is full
+      cache.put(word, newNode);
     }
   }
 
@@ -48,8 +45,8 @@ public class LRU implements CacheReplacementPolicy { // Oldest element searched 
     private Node tail;
 
     public DoublyLinkedList() {
-      this.head.next = null;
-      this.tail.prev = null;
+      this.head = null;
+      this.tail = null;
     }
 
     public void addToHead(Node node) {

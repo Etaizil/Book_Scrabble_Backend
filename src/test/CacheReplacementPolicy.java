@@ -1,4 +1,4 @@
-package test2;
+package test;
 
 /*
 @created 19/03/2024 - 17:08
