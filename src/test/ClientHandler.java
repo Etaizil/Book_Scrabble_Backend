@@ -1,10 +1,16 @@
 package test;
 
 /*
-@created 19/04/2024 - 19:18
+@created 20/04/2024 - 18:06
 @project PTM1 Project
 @author  Zilberman Etai
 */
-public class ClientHandler {
-  public static void main(String[] args) {}
+
+import java.io.InputStream;
+import java.io.OutputStream;
+
+public interface ClientHandler {
+  void handleClient(InputStream inFromclient, OutputStream outToClient);
+
+  void close();
 }
